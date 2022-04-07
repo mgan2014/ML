@@ -23,10 +23,28 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+least_error = 1;
+pred_error = 1;
+C_optimal = C;
+sigma_optimal = sigma;
 
+for C = [0.01 0.03 0.1 0.3 1 3 10 30]
+   for sigma = [0.01 0.03 0.1 0.3 1 3 10 30]
+      % Train the SVM
+      model= svmTrain(X, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma));
+      predictions = svmPredict(model, Xval);
+      pred_error = mean(double(predictions ~= yval));
+      if (least_error > pred_error)
+         least_error = pred_error;
+         C_optimal = C;
+         sigma_optimal = sigma;
+      end
+   end
+end
 
-
-
+%return optimal values
+C = C_optimal;
+sigma = sigma_optimal;
 
 
 % =========================================================================
